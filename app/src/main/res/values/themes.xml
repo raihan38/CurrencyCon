@@ -1,0 +1,13 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.CurrencyCon" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <!-- Main theme colors -->
+        <!--   your app branding color for the app bar -->
+
+
+        <!--   theme UI controls like checkboxes and text fields -->
+
+    </style>
+</resources>
