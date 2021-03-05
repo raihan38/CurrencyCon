@@ -1,13 +1,13 @@
 <resources>
     <string name="app_name">CurrencyCon</string>
     <string-array name="fromtocurrency">
-        <item>Bangladesh</item>
-        <item>China</item>
-        <item>India</item>
-        <item>England</item>
-        <item>Japan</item>
-        <item>Canada</item>
-        <item>Australia</item>
-        <item>Serbia </item>
+        <item>BDT</item>
+        <item>USD</item>
+        <item>AUD</item>
+        <item>EUR</item>
+        <item>GBP</item>
+        <item>INR</item>
+        <item>LBP</item>
+        <item>RSD</item>
     </string-array>
 </resources>
