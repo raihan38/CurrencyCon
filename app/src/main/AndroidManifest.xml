@@ -12,7 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light"
        >
-        <activity android:name=".ConverterActivity"></activity>
+        <activity android:name=".ConverterActivity">
+
+        </activity>
         <activity android:name=".StartScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

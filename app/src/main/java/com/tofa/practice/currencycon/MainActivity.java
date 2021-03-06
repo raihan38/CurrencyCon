@@ -18,6 +18,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.JsonObject;
 import com.tofa.practice.currencycon.Retrofit.RetrofitBuilder;
 import com.tofa.practice.currencycon.Retrofit.RetrofitInterface;
 
@@ -46,15 +47,13 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-
-            // The following two sentences for the ActionBar if the topic is the use of NoActionBar, use the following is a null pointer exception will be reported
+        setContentView(R.layout.activity_main);
+        // The following two sentences for the ActionBar if the topic is the use of NoActionBar, use the following is a null pointer exception will be reported
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
-        setContentView(R.layout.activity_main);
+
 
         amount = findViewById(R.id.amount);
 
@@ -69,25 +68,24 @@ public class MainActivity extends AppCompatActivity implements
 
         fromCurrency="";
         toCurrency="";
+        String[] fromToCurrency = {"BDT","USD","INR","EUR","RSD","GBP","AUD","LBP"};
 
-        ArrayAdapter<CharSequence> fromadapter = ArrayAdapter.createFromResource(this,
-                R.array.fromtocurrency, simple_spinner_item);
+        ArrayAdapter<String> fromadapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, fromToCurrency);
 
         // Specify the layout to use when the list of choices appears
         fromadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         fromSpinner.setAdapter(fromadapter);
-        fromSpinner.setOnItemSelectedListener((AdapterView.OnItemSelectedListener) this);
+       // fromSpinner.setOnItemSelectedListener((AdapterView.OnItemSelectedListener) this);
 
 
-        ArrayAdapter<CharSequence> toadapter = ArrayAdapter.createFromResource(this,
-                R.array.fromtocurrency, simple_spinner_item);
+        ArrayAdapter<String> toadapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, fromToCurrency);
 
         // Specify the layout to use when the list of choices appears
         toadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         toSpinner.setAdapter(toadapter);
-        toSpinner.setOnItemSelectedListener((AdapterView.OnItemSelectedListener) this);
+       // toSpinner.setOnItemSelectedListener((AdapterView.OnItemSelectedListener) this);
 
 
         convert.setOnClickListener(new View.OnClickListener() {
@@ -100,10 +98,17 @@ public class MainActivity extends AppCompatActivity implements
                 if(fromCurrency.isEmpty()==false){
                     Log.e("fromC",fromCurrency+"value");
 
+
+                }
+                else{
+                    Toast.makeText(getApplicationContext(),"Please select a Primary Currency",Toast.LENGTH_LONG).show();
                 }
                 if(toCurrency.isEmpty()==false){
                     Log.e("fromC",toCurrency+"value");
 
+                }
+                else{
+                    Toast.makeText(getApplicationContext(),"Please select a Conversion Currency",Toast.LENGTH_LONG).show();
                 }
                 if(stringAmount.isEmpty()==false){
                     Log.e("fromC",stringAmount+"value");
@@ -111,57 +116,39 @@ public class MainActivity extends AppCompatActivity implements
                 }
 
                 // Amount = ParseDouble(stringAmount);
-
-
-
                 RetrofitInterface retrofitInterface = RetrofitBuilder.getRetrofitInstance().create(RetrofitInterface.class);
-                Call<JSONObject> call = retrofitInterface.getExchangeCurrency(fromCurrency);
-                call.enqueue(new Callback<JSONObject>() {
+                //Call<JsonObject> call = retrofitInterface.getExchangeCurrency(fromSpinner.getSelectedItem().toString());
+                Call<JsonObject> call = retrofitInterface.getExchangeCurrency(fromCurrency);
+                 call.enqueue(new Callback<JsonObject>() {
                     @Override
-                    public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {
+                    public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                        JsonObject res = response.body();
 
-                        JSONObject res = response.body();
+                        JsonObject rates = res.getAsJsonObject("rates");
                         try {
-
-                            if(res !=null){
-                                JSONObject rates= res.getJSONObject("conversion_rates");
-                                Amount = Double.valueOf(stringAmount);
-                                double Multiplier = Double.valueOf(rates.get(toCurrency).toString());
-                                Result = Amount * Multiplier;
-                                result.setText(String.valueOf(Result));
-                            }
-
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                            Amount = Double.valueOf(stringAmount);
                         }
+                        catch (Exception e){
+                            Toast.makeText(getApplicationContext(),"Please enter a value",Toast.LENGTH_LONG).show();
+                        }
+
+                        double multiplier = Double.valueOf(rates.get(toSpinner.getSelectedItem().toString()).toString());
+                        Result = Amount * multiplier;
+
 
                         Log.e("response",String.valueOf(res));
 
-
-
-
-
-
                     }
+
+
 
                     @Override
-                    public void onFailure(Call<JSONObject> call, Throwable t) {
+                    public void onFailure(Call<JsonObject> call, Throwable t) {
 
                     }
+
                 });
-
-
-
-
-
-
-
-
-
-
-
-
+                result.setText(String.valueOf(Result));
 
 
             }
@@ -182,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements
                    try {
 
                        amount.setText(" ");
-                       amount.setHint("Amount");
+
                        Amount=0;
 
 
@@ -192,6 +179,7 @@ public class MainActivity extends AppCompatActivity implements
 
 
                    }
+                   amount.setHint("Amount");
 
                }
                 if(stringResult.isEmpty()==false){
@@ -199,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements
                     try {
 
                         result.setText(" ");
-                        result.setHint("Result");
+
 
 
                     } catch(Exception e) {
@@ -207,6 +195,7 @@ public class MainActivity extends AppCompatActivity implements
 
 
                     }
+                    result.setHint("Result");
 
 
                 }
